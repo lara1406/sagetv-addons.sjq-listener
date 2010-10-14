@@ -18,9 +18,9 @@ package com.google.code.sagetvaddons.sjq.listener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
  * @author dbattams
@@ -38,19 +38,24 @@ public final class Listener {
 		this.port = port;
 	}
 	
-	public void init() throws IOException, ClassNotFoundException {
+	public void init() throws IOException {
 		srvSocket = new ServerSocket(port);
+		srvSocket.setSoTimeout(5000);
 		while(true) {
-			Socket s = srvSocket.accept();
-			LOG.info("Received connection from: " + s.getInetAddress());
-			Thread t = new Thread(new Handler(s, cmdPkg));
-			t.setDaemon(true);
-			t.start();
+			try {
+				Socket s = srvSocket.accept();
+				LOG.info("Received connection from: " + s.getInetAddress());
+				Thread t = new Thread(new Handler(s, cmdPkg));
+				t.setDaemon(true);
+				t.start();
+			} catch(SocketTimeoutException e) {
+				
+			}
+			if(Thread.interrupted()) {
+				srvSocket.close();
+				LOG.warn("Shutting down listener...");
+				break;
+			}
 		}
-	}
-
-	static public void main(String[] args) throws IOException, ClassNotFoundException {
-		PropertyConfigurator.configure(args[2]);
-		new Listener(args[0], Integer.parseInt(args[1])).init();
 	}
 }

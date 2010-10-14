@@ -1,14 +1,8 @@
 <SageTVPlugin>
-	<Name>Sage Job Queue (SJQ)</Name>
-	<Identifier>sre</Identifier>
+	<Name>sjq-listener</Name>
+	<Identifier>sjq-listener</Identifier>
 	<Description>
-SRE monitors live events and extends the recording as necessary.  Don't let your recordings stop early and miss out on extra innings or overtime!
- 
-This plugin communicates with the Live PVR Data web service (http://www.livepvrdata.com) to determine if your recordings need to be extended because the recording is a live event.  Currently, the web service only supports monitoring of specific sporting events (NFL, NHL, MLB, NBA, NCAA football, NCAA basketball).  With this plugin enabled, all your recordings will be monitored against this web service and your recordings will be extended as necessary to ensure that you do not miss any portion of a live event because it runs longer than the EPG listings.
- 
-This plugin installs a web GUI app within the Jetty plugin for online viewing and configuration.  The SRE web app is installed at the /sre/ context within the Jetty plugin.
- 
-This plugin requires a Google Account to operate properly.  The Live PVR Data web service requires Google Account authentication in order to query the web service for event data. 
+SJQv4 network listener library; do not install manually.
 	</Description>
 	<Author>Slugger</Author>
 	<CreationDate>2007.05.02</CreationDate>
