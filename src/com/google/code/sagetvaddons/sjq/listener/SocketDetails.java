@@ -15,38 +15,46 @@
  */
 package com.google.code.sagetvaddons.sjq.listener;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+public final class SocketDetails {
 
-
-public abstract class Command {
-
-	private ObjectInputStream in;
-	private ObjectOutputStream out;
-
-	public Command(ObjectInputStream in, ObjectOutputStream out) {
-		this.out = out;
-		this.in = in;
-	}
-
-	/**
-	 * @return the in
-	 */
-	public ObjectInputStream getIn() {
-		return in;
-	}
-
-	/**
-	 * @return the out
-	 */
-	public ObjectOutputStream getOut() {
-		return out;
-	}
-
-	public NetworkAck readAck() throws IOException {
-		return NetworkAck.get(in.readUTF());
-	}
+	private String localAddress;
+	private int localPort;
+	private String remoteAddress;
+	private int remotePort;
 	
-	abstract public void execute() throws IOException;
+	public SocketDetails(String localAddress, int localPort, String remoteAddress, int remotePort) {
+		this.localAddress = localAddress;
+		this.localPort = localPort;
+		this.remoteAddress = remoteAddress;
+		this.remotePort = remotePort;
+	}
+
+	/**
+	 * @return the localAddress
+	 */
+	public String getLocalAddress() {
+		return localAddress;
+	}
+
+	/**
+	 * @return the localPort
+	 */
+	public int getLocalPort() {
+		return localPort;
+	}
+
+	/**
+	 * @return the remoteAddress
+	 */
+	public String getRemoteAddress() {
+		return remoteAddress;
+	}
+
+	/**
+	 * @return the remotePort
+	 */
+	public int getRemotePort() {
+		return remotePort;
+	}
+
 }

@@ -27,10 +27,11 @@ import org.apache.log4j.Logger;
  * @author dbattams
  *
  */
-final class Handler implements Runnable {
+final public class Handler implements Runnable {
 	static private final Logger LOG = Logger.getLogger(Handler.class);
 
 	static private final String CMD_QUIT = "QUIT";
+	static public final ThreadLocal<SocketDetails> SOCKET_DETAILS = new ThreadLocal<SocketDetails>();
 	
 	private Socket sock;
 	private ObjectInputStream in;
@@ -51,6 +52,7 @@ final class Handler implements Runnable {
 	@Override
 	public void run() {
 		try {
+			SOCKET_DETAILS.set(new SocketDetails(sock.getLocalAddress().getHostAddress(), sock.getLocalPort(), sock.getInetAddress().getHostAddress(), sock.getPort()));
 			String cmdName = null;
 			Command cmd = null;
 			while(cmdName == null || !cmdName.toUpperCase().equals(CMD_QUIT)) {
