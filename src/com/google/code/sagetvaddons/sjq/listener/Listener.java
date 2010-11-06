@@ -32,16 +32,19 @@ public final class Listener {
 	private String cmdPkg;
 	private int port;
 	private ServerSocket srvSocket;
+	private boolean isStopped;
 
 	public Listener(String cmdPkg, int port) {
 		this.cmdPkg = cmdPkg;
 		this.port = port;
+		isStopped = false;
 	}
 	
 	public void init() throws IOException {
 		srvSocket = new ServerSocket(port);
 		srvSocket.setSoTimeout(5000);
-		while(true) {
+		boolean isStopped = false;
+		while(!isStopped) {
 			try {
 				Socket s = srvSocket.accept();
 				LOG.info("Received connection from: " + s.getInetAddress());
@@ -51,11 +54,18 @@ public final class Listener {
 			} catch(SocketTimeoutException e) {
 				
 			}
-			if(Thread.interrupted()) {
+			synchronized(this) {
+				isStopped = this.isStopped;
+			}
+			if(isStopped || Thread.interrupted()) {
 				srvSocket.close();
 				LOG.warn("Shutting down listener...");
 				break;
 			}
 		}
+	}
+	
+	synchronized public void setStopped(boolean b) {
+		isStopped = b;
 	}
 }
