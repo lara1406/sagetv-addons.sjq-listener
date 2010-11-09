@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
  *
  */
 final public class Handler implements Runnable {
-	static private final Logger LOG = Logger.getLogger(Handler.class);
 
 	static private final String CMD_QUIT = "QUIT";
 	static public final ThreadLocal<SocketDetails> SOCKET_DETAILS = new ThreadLocal<SocketDetails>();
@@ -37,13 +36,17 @@ final public class Handler implements Runnable {
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private String cmdPkg;
+	private Logger log;
+	private String logPkg;
 
-	Handler(Socket sock, String cmdPkg) throws IOException {
+	Handler(Socket sock, String cmdPkg, String logPkg) throws IOException {
 		this.sock = sock;
 		this.out = new ObjectOutputStream(sock.getOutputStream());
 		this.out.flush();
 		this.in = new ObjectInputStream(sock.getInputStream());
 		this.cmdPkg = cmdPkg;
+		this.logPkg = logPkg;
+		log = Logger.getLogger(logPkg + "." + Handler.class.getSimpleName());
 	}
 
 	/* (non-Javadoc)
@@ -57,8 +60,8 @@ final public class Handler implements Runnable {
 			Command cmd = null;
 			while(cmdName == null || !cmdName.toUpperCase().equals(CMD_QUIT)) {
 				cmdName = in.readUTF();
-				LOG.info("CMD: " + cmdName + " :: PEER: " + sock.getInetAddress());
-				cmd = CommandFactory.get(cmdName, cmdPkg, in, out);
+				log.info("CMD: " + cmdName + " :: PEER: " + sock.getInetAddress());
+				cmd = CommandFactory.get(cmdName, cmdPkg, in, out, logPkg);
 				if(cmd != null) {
 					if(!cmdName.toUpperCase().equals(CMD_QUIT)) {
 						out.writeUTF(NetworkAck.OK);
@@ -71,7 +74,7 @@ final public class Handler implements Runnable {
 				}
 			}
 		} catch (IOException e) {
-			LOG.error("IOError", e);
+			log.error("IOError", e);
 		} finally {
 			try {
 				if(in != null)
@@ -81,7 +84,7 @@ final public class Handler implements Runnable {
 				if(sock != null)
 					sock.close();
 			} catch(IOException e) {
-				LOG.error("IOError", e);
+				log.error("IOError", e);
 			}
 		}
 	}

@@ -23,7 +23,6 @@ import java.net.Socket;
 import org.apache.log4j.Logger;
 
 public class ListenerClient {
-	static private final Logger LOG = Logger.getLogger(ListenerClient.class);
 
 	private String host;
 	private int port;
@@ -32,8 +31,9 @@ public class ListenerClient {
 	private ObjectOutputStream out;
 	private boolean isClosed;
 	private boolean isValid;
+	private Logger log;
 
-	public ListenerClient(String host, int port) throws IOException {
+	public ListenerClient(String host, int port, String logPkg) throws IOException {
 		isClosed = false;
 		isValid = true;
 		this.host = host;
@@ -42,6 +42,7 @@ public class ListenerClient {
 		out = new ObjectOutputStream(sock.getOutputStream());
 		out.flush();
 		in = new ObjectInputStream(sock.getInputStream());
+		log = Logger.getLogger(logPkg + "." + ListenerClient.class.getSimpleName());
 	}
 
 	public NetworkAck sendCmd(String cmd) throws IOException {
@@ -73,7 +74,7 @@ public class ListenerClient {
 		try {
 			close();
 		} finally {
-			try { super.finalize(); } catch(Throwable t) { LOG.error("FinalizeError", t); }
+			try { super.finalize(); } catch(Throwable t) { log.error("FinalizeError", t); }
 		}
 	}
 
@@ -94,9 +95,9 @@ public class ListenerClient {
 					out.flush();
 					NetworkAck ack = NetworkAck.get(in.readUTF());
 					if(ack.isOk())
-						LOG.info("Disconnected from " + host + ":" + port);
+						log.info("Disconnected from " + host + ":" + port);
 					else
-						LOG.warn("Error disconnecting from " + host + ":" + port + ": " + ack.getMsg());
+						log.warn("Error disconnecting from " + host + ":" + port + ": " + ack.getMsg());
 				}
 				if(in != null)
 					in.close();
@@ -105,7 +106,7 @@ public class ListenerClient {
 				if(sock != null)
 					sock.close();
 			} catch(IOException e) {
-				LOG.warn("IOError", e);
+				log.warn("IOError", e);
 			}
 		}
 	}

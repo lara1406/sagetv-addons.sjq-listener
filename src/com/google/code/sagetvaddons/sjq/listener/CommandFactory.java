@@ -23,16 +23,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public final class CommandFactory {
-	static private final Logger LOG = Logger.getLogger(CommandFactory.class);
 	
 	@SuppressWarnings("unchecked")
-	static public final Command get(String name, String cmdPkg, ObjectInputStream in, ObjectOutputStream out) {
+	static public final Command get(String name, String cmdPkg, ObjectInputStream in, ObjectOutputStream out, String logPkg) {
 		try {
 			Class<Command> cls = (Class<Command>)Class.forName(cmdPkg + "." + StringUtils.capitalize(name.toLowerCase()));
 			Constructor<Command> ctor = cls.getConstructor(ObjectInputStream.class, ObjectOutputStream.class);
 			return ctor.newInstance(in, out);
 		} catch (Exception e) {
-			LOG.error("Error", e);
+			Logger log = Logger.getLogger(logPkg + "." + CommandFactory.class.getSimpleName());
+			log.error("Error", e);
 		}
 		return null;
 	}

@@ -27,15 +27,18 @@ import org.apache.log4j.Logger;
  *
  */
 public final class Listener {
-	static private final Logger LOG = Logger.getLogger(Listener.class);
 	
 	private String cmdPkg;
 	private int port;
 	private ServerSocket srvSocket;
+	private String logPkg;
+	private Logger log;
 
-	public Listener(String cmdPkg, int port) {
+	public Listener(String cmdPkg, int port, String logPkg) {
 		this.cmdPkg = cmdPkg;
 		this.port = port;
+		this.logPkg = logPkg;
+		log = Logger.getLogger(logPkg + "." + Listener.class.getSimpleName());
 	}
 	
 	public void init() throws IOException {
@@ -44,8 +47,8 @@ public final class Listener {
 		while(true) {
 			try {
 				Socket s = srvSocket.accept();
-				LOG.info("Received connection from: " + s.getInetAddress());
-				Thread t = new Thread(new Handler(s, cmdPkg));
+				log.info("Received connection from: " + s.getInetAddress());
+				Thread t = new Thread(new Handler(s, cmdPkg, logPkg));
 				t.setDaemon(true);
 				t.start();
 			} catch(SocketTimeoutException e) {
@@ -53,7 +56,7 @@ public final class Listener {
 			}
 			if(Thread.interrupted()) {
 				srvSocket.close();
-				LOG.warn("Shutting down listener...");
+				log.warn("Shutting down listener...");
 				break;
 			}
 		}
