@@ -74,7 +74,7 @@ final public class Handler implements Runnable {
 				}
 			}
 		} catch (IOException e) {
-			log.error("IOError", e);
+			log.error("IOError: " + SOCKET_DETAILS.get().getRemoteAddress() + ":" + SOCKET_DETAILS.get().getRemotePort(), e);
 		} finally {
 			try {
 				if(in != null)
