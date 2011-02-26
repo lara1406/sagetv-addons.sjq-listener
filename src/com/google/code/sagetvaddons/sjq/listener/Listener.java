@@ -47,7 +47,7 @@ public final class Listener {
 		while(true) {
 			try {
 				Socket s = srvSocket.accept();
-				log.info("Received connection from: " + s.getInetAddress());
+				log.info(String.format("Received connection from: %s:%d", s.getInetAddress(), s.getPort()));
 				Thread t = new Thread(new Handler(s, cmdPkg, logPkg));
 				t.setDaemon(true);
 				t.start();
