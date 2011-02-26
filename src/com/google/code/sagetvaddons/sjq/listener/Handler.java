@@ -60,7 +60,7 @@ final public class Handler implements Runnable {
 			Command cmd = null;
 			while(cmdName == null || !cmdName.toUpperCase().equals(CMD_QUIT)) {
 				cmdName = in.readUTF();
-				log.info("CMD: " + cmdName + " :: PEER: " + sock.getInetAddress());
+				log.info("CMD: " + cmdName + " :: PEER: " + sock.getInetAddress() + ":" + sock.getPort());
 				cmd = CommandFactory.get(cmdName, cmdPkg, in, out, logPkg);
 				if(cmd != null) {
 					if(!cmdName.toUpperCase().equals(CMD_QUIT)) {
